@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
+<title>フリーBGMプレイヤー</title>
+</head><body>
+<h1>フリーBGMプレイヤー</h1>
+<select id=selgenre></select>
+<select id=selkeywords></select>
+<select id=selcategories></select>
+<input placeholder="キーワード" id=inkey>
+<label><input type=checkbox id=chkshort>ショート</label>
+<label><input type=checkbox id=chkloop>ループ</label>
+<!--<label><input type=checkbox id=chkrandom>ランダム</label>-->
+
+<div id=divlist></div>
+
+<hr>
+BGM: <a href=https://bgmer.net/>フリー音源・無料BGM「BGMer(ビージーエマー)」</a><br>
+<a href=https://github.com/code4fukui/music-by-BGMer>src on GitHub</a>
+
+
+<script type="module">
+import { CSV } from "https://code4fukui.github.io/CSV/CSV.js";
+import { sleep } from "https://js.sabae.cc/sleep.js";
+
+const baseurl = "https://img.fukuno.com/music/BGMer/data/";
+
+// player
+let audio = null;
+const stop = async () => {
+  if (audio) {
+    for (let i = 0; i < 10; i++) {
+      audio.volume = 0.9 - i * 0.1;
+      await sleep(100);
+    }
+    audio.pause();
+    await sleep(500);
+  }
+};
+let funcplayend = null;
+const play = async (url) => {
+  const audio2 = new Audio();
+  audio2.src = url;
+  await stop();
+  audio = audio2;
+  audio.play();
+  audio.onended = () => {
+    if (funcplayend) funcplayend();
+  };
+};
+const setOnPlayEnd = (f) => {
+  funcplayend = f;
+};
+
+//
+
+const list = await CSV.fetchJSON("./music_list.csv");
+
+const setSelect = (name) => {
+  const set = new Set();
+  for (const item of list) {
+    const vals = item[name].split(",");
+    vals.forEach(i => set.add(i));
+  }
+  const sel = document.getElementById("sel" + name);
+  const opt = document.createElement("option");
+  opt.textContent = "-";
+  sel.appendChild(opt);
+  for (const v of set.values()) {
+    const opt = document.createElement("option");
+    opt.textContent = v;
+    sel.appendChild(opt);
+  }
+};
+
+const names = ["genre", "keywords", "categories"];
+names.forEach(i => setSelect(i));
+
+const showTable = (divlist, data) => {
+  divlist.innerHTML = "";
+  const csv = CSV.fromJSON(data);
+  divlist.appendChild(CSV.makeTable(csv));
+};
+
+let playidx = -1;
+const show = () => {
+  playidx = -1;
+  const list2 = list.filter(i => {
+    for (const name of names) {
+      const sel = document.getElementById("sel" + name);
+      if (sel.value != "-" && i[name].indexOf(sel.value) == -1) return false;
+    }
+    const key = inkey.value;
+    if (key == "") return true;
+    const names2 = [...names, "title", "description", "url", "music_SHORT"];
+    for (const name of names2) {
+      if (i[name].indexOf(key) >= 0) return true;
+    }
+    return false;
+  });
+  const list3 = list2.map(i => {
+    const show = ["title", "description", "publisher" ];
+    const o = {};
+    for (const name of show) {
+      o[name] = i[name];
+    }
+    return o;
+  });
+  showTable(divlist, list3);
+  const trs = divlist.querySelectorAll("tr");
+  let bktr = null;
+  for (let i = 1; i < trs.length; i++) {
+    const playIndex = (i) => {
+      const idx = i - 1;
+      const tr = trs[i];
+      if (bktr) {
+        bktr.classList.remove("playing");
+        if (bktr == tr) {
+          stop();
+          bktr = null;
+          return;
+        }
+      }
+      tr.classList.add("playing");
+      bktr = tr;
+      const item = list2[idx];
+      const musicname = chkshort.checked ? "music_SHORT" : "music_LONG";
+      const url = item[musicname];
+      const url2 = baseurl + (chkshort.checked ? "short/" : "long/") + url.substring(url.lastIndexOf("/") + 1);
+      console.log(item);
+      play(url2);
+      playidx = i;
+      setOnPlayEnd(() => {
+        const nextidx = chkloop.checked ? playidx : (i == trs.length - 1 ? 1 : i + 1);
+        if (nextidx == i) {
+          bktr = null;
+        }
+        if (nextidx >= 0) playIndex(nextidx);
+      });
+    };
+    const tr = trs[i];
+    tr.onclick = (e) => {
+      if (e.target.tagName == "A") return;
+      playIndex(i);
+    };
+
+    const idx = i - 1;
+    const item = list2[idx];
+    const tds = tr.querySelectorAll("td");
+    tds[tds.length - 1].innerHTML = `<a href=${item.url} target=_blank>BGMer</a>`;
+  }
+};
+show();
+
+document.querySelectorAll("select").forEach(i => i.oninput = show);
+inkey.oninput = show;
+
+</script>
+
+<style>
+table {
+  border-collapse: collapse;
+}
+td, th {
+  border: 1px solid black;
+  padding: .1em .3em;
+}
+th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: white;
+}
+tr:first-child {
+  border: 1px solid black;
+}
+.playing {
+  background-color: #efefef;
+}
+#divlist {
+  margin-top: 1em;
+  height: calc(100vh - 14em);
+  overflow: scroll;
+}
+a {
+  color: gray !important;
+}
+</style>
+
+</body></html>
