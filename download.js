@@ -5,7 +5,10 @@ import { sleep } from "https://js.sabae.cc/sleep.js";
 
 const url = "https://bgmer.net/song-list?sort_by=normal";
 
-const html = await fetchOrLoad(url);
+//const forcefetchlist = false;
+const forcefetchlist = true;
+
+const html = await fetchOrLoad(url, forcefetchlist);
 const dom = HTMLParser.parse(html);
 console.log(html);
 
@@ -23,7 +26,7 @@ for (let i = 2; i <= lastpage; i++) {
   const url = `https://bgmer.net/song-list/page/${i}?sort_by=normal`;
 
   //console.log(url);
-  const html = await fetchOrLoad(url);
+  const html = await fetchOrLoad(url, forcefetchlist);
   const dom = HTMLParser.parse(html);
   //console.log(html);
 
@@ -32,6 +35,7 @@ for (let i = 2; i <= lastpage; i++) {
   const links2 = links.map(i => i.getAttribute("href"));
   //console.log(links2);
   links2.forEach(i => list.push(i));
+  await sleep(100 * Math.random());
 }
 //console.log(list);
 
