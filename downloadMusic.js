@@ -13,10 +13,14 @@ export const downloadData = async (url, path) => {
   }
 };
 
+const sleepRandom = async () => {
+  await sleep(200 + 100 * Math.random());
+};
+
 const list = await CSV.fetchJSON("music_list.csv");
 for (const item of list) {
   await downloadData(item.music_SHORT, "short");
-  await sleep(500 + 100 * Math.random());
+  await sleepRandom();
   await downloadData(item.music_LONG, "long");
-  await sleep(500 + 100 * Math.random());
+  await sleepRandom();
 }

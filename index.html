@@ -97,10 +97,14 @@ const show = () => {
     return false;
   });
   const list3 = list2.map(i => {
-    const show = ["title", "description", "publisher" ];
+    const show = ["title", "datePublished", "description", "publisher" ];
     const o = {};
     for (const name of show) {
-      o[name] = i[name];
+      if (name == "datePublished") {
+        o["published"] = i[name].substring(0, 10);
+      } else {
+        o[name] = i[name];
+      }
     }
     return o;
   });
@@ -162,6 +166,9 @@ table {
 td, th {
   border: 1px solid black;
   padding: .1em .3em;
+}
+td:nth-child(2) {
+  white-space: nowrap;
 }
 th {
   position: sticky;
