@@ -1,7 +1,23 @@
 # free-bgm-player
- 
+
+A free HTML-based BGM player for the free BGM repository "BGMer".
+
+## Demo
 https://code4fukui.github.io/free-bgm-player/
 
-## 音源
+## Features
+- Searchable and filterable BGM catalog
+- Short and long version playback
+- Looping playback
+- Random playback
 
-- [フリー音源・無料BGM「BGMer(ビージーエマー)」](https://bgmer.net/)
+## Usage
+1. Open the HTML file in a web browser.
+2. Use the search and filter options to find suitable BGM.
+3. Click on a row to play the selected BGM.
+
+## Data / API
+The project uses the free BGM repository "BGMer" (https://bgmer.net/) as the data source.
+
+## License
+This project is licensed under the MIT License.
