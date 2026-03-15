@@ -1,5 +1,7 @@
 # free-bgm-player
 
+> 日本語のREADMEはこちらです: [README.ja.md](README.ja.md)
+
 A free HTML-based BGM player for the free BGM repository "BGMer".
 
 ## Demo
