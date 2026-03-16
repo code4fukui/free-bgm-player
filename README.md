@@ -22,4 +22,4 @@ https://code4fukui.github.io/free-bgm-player/
 The project uses the free BGM repository "BGMer" (https://bgmer.net/) as the data source.
 
 ## License
-This project is licensed under the MIT License.
+MIT License — see [LICENSE](LICENSE).
