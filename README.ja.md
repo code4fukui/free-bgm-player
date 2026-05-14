@@ -4,7 +4,7 @@
 
 ## デモ
 
-**https://code4fukui.github.io/free-bgm-player/**
+**https://github.com/code4fukui/free-bgm-player
 
 ## 機能
 

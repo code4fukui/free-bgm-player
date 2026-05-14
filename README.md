@@ -6,7 +6,7 @@ A simple, single-file HTML player for music from the free BGM repository, [BGMer
 
 ## Demo
 
-**https://code4fukui.github.io/free-bgm-player/**
+**https://github.com/code4fukui/free-bgm-player
 
 ## Features
 
